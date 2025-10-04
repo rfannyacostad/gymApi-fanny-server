@@ -5,10 +5,7 @@ import { PettyCash } from './../point-of-sale/entities/petty-cash.entity';
 import { CashMovement } from './../point-of-sale/entities/cash-movement.entity';
 import { CashRegister } from './../point-of-sale/entities/cash-register.entity';
 import { Sale } from './../point-of-sale/entities/sale.entity';
-import { Promotion } from './../promotions/promotion.entity';
-import { Routine } from './../routines/routines.entity';
-import { ExerciseType } from './../routines/exercise-type.entity';
-import { Plan } from '../plan/plan.entity';
+
 import { Expense } from 'src/exponse/exponse.entity';
 
 @Entity()
@@ -40,21 +37,6 @@ export class Gym {
   @OneToMany(() => CashRegister, (cashRegister) => cashRegister.gym)
 @Field(() => [CashRegister])
 cashRegisters: CashRegister[];
-
-
-@OneToMany(() => Promotion, (promotion) => promotion.gym, { cascade: true })
-@Field(() => [Promotion], { nullable: true })
-promotions?: Promotion[];
-
-
-
-@OneToMany(() => ExerciseType, (exerciseType) => exerciseType.gym)
-@Field(() => [ExerciseType], { nullable: true })
-exerciseTypes?: ExerciseType[];
-
-@OneToMany(() => Plan, (plan) => plan.gym) // Relación con Plan
-@Field(() => [Plan], { nullable: true })
-plans?: Plan[];
 
   @OneToMany(() => Expense, (expense) => expense.gym)
   expenses: Expense[];

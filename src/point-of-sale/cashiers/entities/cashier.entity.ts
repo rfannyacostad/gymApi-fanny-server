@@ -2,7 +2,6 @@ import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { CashRegister } from '../../entities/cash-register.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from 'src/user/user.entity';
-import { OpsTeam } from 'src/rol/entities/ops-team.entity';
 
 @ObjectType()
 @Entity('cashiers')
@@ -47,9 +46,6 @@ export class Cashier {
   @Field(() => [CashRegister])
   cashRegisters: CashRegister[];
 
- @ManyToOne(() => OpsTeam)
-@JoinColumn({ name: 'userId' })
-user: OpsTeam;
 
 @Field(() => Int, { nullable: true }) // 👈 ¡ESTO es obligatorio!
 @Column({ nullable: true })

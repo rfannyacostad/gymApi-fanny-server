@@ -1,0 +1,32 @@
+CREATE TABLE admin (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+
+CREATE TABLE evento (
+    id SERIAL PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+    descripcion TEXT,
+    fecha TIMESTAMP NOT NULL,
+    duracion INT NOT NULL,
+    admin_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT fk_evento_admin FOREIGN KEY (admin_id) REFERENCES admin(id) ON DELETE CASCADE
+);
+
+
+
+-- Insertar un admin
+INSERT INTO admin (nombre, email, password) 
+VALUES ('Juan Pérez', 'juan@example.com', 'hashed_password');
+
+-- Insertar un evento ligado a ese admin
+INSERT INTO evento (titulo, descripcion, fecha, duracion, admin_id) 
+VALUES ('Clase de Yoga', 'Sesión para principiantes', '2025-08-20 10:00:00', 60, 1);
+

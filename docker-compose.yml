@@ -63,36 +63,6 @@ services:
       - ./uploads:/app/uploads
       # ❌ NO MONTES node_modules desde afuera
 
-
-
-
-
-  backend-rifas:
-    build:
-      context: ../backend-rifas-fanny-server-api-rest-main
-      dockerfile: Dockerfile
-    container_name: backend-rifas
-    restart: always
-    environment:
-      - PORT=3000
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/rifas
-
-
-    volumes:
-      - ../backend-rifas-fanny-server-api-rest-main/uploads:/app/uploads
-      
-    ports:
-      - "3010:3000"
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - shared-network  # 👈 CAMBIADO
-
-
-
-
-
   agenda:
       image: nginx:alpine
       container_name: agenda

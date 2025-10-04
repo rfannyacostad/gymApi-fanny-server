@@ -51,10 +51,6 @@ export class User {
 
   qrCodes: any;
 
-  // user.entity.ts
-@OneToMany(() => Cashier, cashier => cashier.user)
-cashiers: Cashier[];
-
 }
 
 
