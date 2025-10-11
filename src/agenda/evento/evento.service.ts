@@ -17,14 +17,16 @@ export class EventoService {
   findAllByAdmin(adminId: number): Promise<Evento[]> {
     return this.eventoRepository.find({
       where: { admin: { id: adminId } },
-      relations: [
-        'citas',
-        'citas.servicio',
-        'admin',
-        'admin.disponibilidades',
-        'admin.servicios',
-        'servicios',
-      ],
+     relations: [
+  'citas',
+  'citas.servicio',
+  'citas.cliente', // 👈 aquí sí
+  'admin',
+  'admin.disponibilidades',
+  'admin.servicios',
+  'servicios',
+],
+
     });
   }
 

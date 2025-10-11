@@ -33,9 +33,6 @@ export class User {
   @Field({ nullable: true })
   img: string; 
 
-  @Column({ type: 'int', default: 1, nullable: true })
-  @Field(() => Int, { nullable: true })
-  gymId: number;
 
   @Column({ type: 'int', nullable: true })
   @Field(() => Int, { nullable: true })
@@ -49,8 +46,10 @@ export class User {
   @Field({ nullable: true })
   password: string;
 
-  qrCodes: any;
 
+    @Field({ defaultValue: false })
+  @Column({ default: false })
+  isAdmin: boolean; // ✅ <-- este campo
 }
 
 

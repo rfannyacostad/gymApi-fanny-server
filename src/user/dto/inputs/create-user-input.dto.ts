@@ -1,38 +1,51 @@
-import { Field, InputType, ID,  } from '@nestjs/graphql';
-import { IsString, IsNotEmpty, MaxLength, IsBoolean, IsOptional, IsNumber } from 'class-validator';
+import { Field, InputType, Int } from '@nestjs/graphql';
+import {
+  IsString,
+  IsNotEmpty,
+  MaxLength,
+  IsBoolean,
+  IsOptional,
+  IsNumber,
+} from 'class-validator';
 
 @InputType()
 export class CreateUser {
-   
-
   @Field()
   @IsString()
-  @MaxLength(20)
+  @MaxLength(50)
   name: string;
 
   @Field(() => Boolean)
   @IsBoolean()
   actived: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  huella: string; // DTO que recibe 'huella' como Buffer
+  huella?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  img?: string;
 
   @Field()
   @IsString()
-  img: string;
-
-  @Field()
-  @IsString()
+  @IsNotEmpty()
   username: string;
 
-  @Field()
+  @Field(() => Int, { nullable: true })
   @IsNumber()
-  @IsNotEmpty()
-  gymId: number;
+  @IsOptional()
+  adminId?: number; // 🔹 El ID del admin (si el usuario pertenece a uno)
 
-  @Field()
+  @Field(() => Int, { nullable: true })
   @IsNumber()
-  available_days: number;
+  @IsOptional()
+  available_days?: number;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isAdmin?: boolean; // 🔹 True si es administrador
 }

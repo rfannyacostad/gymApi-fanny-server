@@ -4,7 +4,6 @@ import { UpdateUser,CreateUser } from './dto';
 import { DeepPartial, EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WebsocketsGateway } from 'src/socket/gateway';
-import { UpdateAvailableDaysDto, UpdateFingerPrintUserByID } from './dto/inputs/update-user.input.dto';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 
@@ -29,15 +28,12 @@ export class UserService {
       newUser.actived = data.actived;
       newUser.huella = data.huella; 
       newUser.img = data.img; 
-      newUser.gymId = data.gymId;
       newUser.available_days = 666;
-    
-      // 👇 Esto es clave, el username debe venir de "data"
+
       newUser.username = data.username;
     
       const user = await this.userRepository.save(newUser);
-      console.log('✅ Usuario creado con gymId:', user.gymId);
-    
+  
       return user;
     }
     
@@ -57,17 +53,14 @@ export class UserService {
             where: whereCondition,
         });
     }
-    findOneByGymAndUserId(gymId:number,id: number): Promise<User> {
-      return this.userRepository.findOneBy( {gymId,id:id});
-    }
+  
+async findOneByEmail(email: string): Promise<User> {
+  return this.userRepository.findOne({
+    where: { username: email },
+  });
+}
 
-      findOne(id: number): Promise<User> {
-        return this.userRepository.findOneBy({ id:id});
-      }
-
-      async findByHuella(huella: string): Promise<User> {
-        return this.userRepository.findOneBy({ huella:huella});
-      }
+  
 
     async update({ id, name, actived, img }: UpdateUser) {
         const user = await this.userRepository.findOneBy({id:id});
@@ -82,19 +75,7 @@ export class UserService {
     }
 
 
-    async updateFingerPrint({ id, huella }: UpdateFingerPrintUserByID) {
-      console.log("llega al servicio update fingerPrint")
-      const user = await this.userRepository.findOne({ where: { id: id } });
-      if (!user) {
-        throw new Error(`User with ID ${id} not found`);
-      }
     
-      // Actualizar los campos necesarios
-      user.huella = huella; // Actualizar el ID
-    
-      // Guardar y devolver el usuario actualizado
-      return await this.userRepository.save(user);
-    }
     
     async getStatus(id: number) {
       const user = await this.userRepository.findOneBy({id:id});
