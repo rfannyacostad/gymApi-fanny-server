@@ -41,15 +41,14 @@ export class User {
   @Column({ type: 'varchar', length: 50, unique: true, nullable: true })
   @Field({ nullable: true })
   username: string;
-
   @Column({ type: 'text', nullable: true })
   @Field({ nullable: true })
   password: string;
 
 
     @Field({ defaultValue: false })
-  @Column({ default: false })
-  isAdmin: boolean; // ✅ <-- este campo
+    @Column({ default: false })
+    isAdmin: boolean; // ✅ <-- este campo
 }
 
 

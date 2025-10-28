@@ -3,8 +3,6 @@ import { User } from './user.entity';
 import { UserService } from './user.service';
 import {CreateUser, UpdateUser } from './dto';
 import { PubSub } from 'graphql-subscriptions';
-import { Get } from '@nestjs/common';
-import { Observable, interval, map } from 'rxjs';
 import { WebsocketsGateway } from 'src/socket/gateway';
 import { AppGateway } from 'src/app.gateway';
 import { AutoTouchVersion } from 'src/update-version/decorators/auto-touch-version.decorator';
@@ -28,7 +26,7 @@ export class UserResolver {
         @Args('userId', { nullable: true }) userId?: number
 
     ) {
-        
+      
         return this._user.findAllByGymId(gymId,userId); // Aquí asumes que tienes un método que filtra por gymId
     }
 
@@ -37,16 +35,27 @@ export class UserResolver {
 async loginGoogle(@Args('email') email: string) {
   console.log('📩 Login con Google (solo email):', email);
 
+  // Buscar usuario
   const user = await this._user.findOneByEmail(email);
 
-  if (!user) {
-    console.warn('⚠️ Usuario no encontrado:', email);
-    return null;
+  // Si existe, devolverlo
+  if (user) {
+    console.log('✅ Usuario encontrado:', user.username);
+    return user;
   }
 
-  console.log('✅ Usuario encontrado:', user.username, 'Admin:', user.isAdmin);
-  return user;
+  // Si no existe, intentar crear el primero como cliente
+  const created = await this._user.createFirstClientIfNoneExists(email);
+
+  if (created) {
+    console.log('🆕 Cliente creado automáticamente:', created.username);
+    return created;
+  }
+
+ console.warn('⚠️ Usuario no encontrado y no se creó porque ya existen usuarios.');
+  return null; 
 }
+
 
 
 
@@ -61,15 +70,6 @@ async updateInput(@Args('updateUser') updateUser: UpdateUser) {
 
   return updated;
 }
-
-
-
-
-@Subscription(() => User)
-newUser() {
-    return pubSub.asyncIterator('newUser'); // Maneja la suscripción para el evento newUser
-}
-
 
 
 

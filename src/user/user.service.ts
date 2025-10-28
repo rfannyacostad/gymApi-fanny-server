@@ -122,4 +122,25 @@ async updateAvailableDays(
 }
 
 
+
+
+
+async createFirstClientIfNoneExists(email: string): Promise<User | null> {
+
+
+  const newUser = this.userRepository.create({
+    name: 'Cliente inicial',
+    username: email,
+    actived: true,
+    available_days: 0,
+    isAdmin: false,
+    img: '',
+  });
+
+  const savedUser = await this.userRepository.save(newUser);
+
+  console.log('✅ Cliente creado automáticamente:', savedUser.username);
+  return savedUser;
+}
+
 }

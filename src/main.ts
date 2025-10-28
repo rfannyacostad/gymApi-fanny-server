@@ -12,10 +12,9 @@ async function bootstrap() {
 
   
   // 🚀 Serve 'uploads' directory as static files
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-    prefix: '/uploads/',
-  });
-
+app.useStaticAssets(join(process.cwd(), 'uploads'), {
+  prefix: '/uploads/',
+});
   // 🔹 Setup WebSocket Adapter
   app.useWebSocketAdapter(new IoAdapter(app));
 
