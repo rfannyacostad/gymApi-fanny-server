@@ -19,9 +19,9 @@ export class Cita {
   @Column({ name: 'telefono_cliente', type: 'varchar', length: 20 })
   telefonoCliente: string;
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  @Column({ type: 'timestamp', nullable: true })
-  fecha?: Date;
+  @Field(() => String, { nullable: true })
+@Column({ type: 'date', nullable: true })
+fecha?: string;
 
   @Field()
   @Column({ name: 'hora', type: 'time' })

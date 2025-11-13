@@ -9,13 +9,32 @@ import { UpdateCitaInput } from './dto/update-cita.input';
 export class CitaResolver {
   constructor(private readonly citaService: CitaService) {}
 
-  // 🔹 Create
   @Mutation(() => Cita)
-  crearCita(@Args('data') data: CreateCitaInput): Promise<Cita> {
-    // Convert fecha from string to Date
-    const citaData = { ...data, fecha: new Date(data.fecha) };
-    return this.citaService.crearCita(citaData);
-  }
+async crearCita(@Args('data') data: CreateCitaInput) {
+  const citaData = {
+    ...data,
+    // 🔹 Si viene como Date, conviértela; si ya es string, déjala igual
+    fecha: data.fecha
+      ? new Date(data.fecha).toISOString().split('T')[0]
+      : null,
+  };
+  return this.citaService.crearCita(citaData);
+}
+
+@Mutation(() => Cita)
+async actualizarCita(
+  @Args('id', { type: () => Int }) id: number,
+  @Args('data') data: UpdateCitaInput,
+) {
+  const citaData = {
+    ...data,
+    fecha: data.fecha
+      ? new Date(data.fecha).toISOString().split('T')[0]
+      : null,
+  };
+  return this.citaService.actualizarCita(id, citaData);
+}
+
 
   // 🔹 Read all
   @Query(() => [Cita], { name: 'citas' })
@@ -29,17 +48,6 @@ export class CitaResolver {
     return this.citaService.obtenerCitaPorId(id);
   }
 
-  
-// 🔹 Update
-@Mutation(() => Cita)
-actualizarCita(
-  @Args('id', { type: () => Int }) id: number,
-  @Args('data') data: UpdateCitaInput,
-): Promise<Cita> {
-  // Convert fecha de string a Date si existe
-  const citaData = { ...data, fecha: data.fecha ? new Date(data.fecha) : undefined };
-  return this.citaService.actualizarCita(id, citaData);
-}
 
 
   // 🔹 Delete

@@ -1,4 +1,4 @@
-import { InputType, Field, Int, GraphQLISODateTime } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
 import { IsNotEmpty, IsString, IsOptional, IsInt, IsDateString } from 'class-validator';
 
 @InputType()
@@ -13,10 +13,9 @@ export class CreateCitaInput {
   @IsString()
   telefonoCliente: string;
 
- @Field()
-@IsDateString()
-fecha: string;
-
+  @Field()
+  @IsDateString()
+  fecha: string;
 
   @Field()
   @IsNotEmpty()
@@ -34,4 +33,10 @@ fecha: string;
   @Field(() => Int)
   @IsInt()
   servicioId: number;
+
+  // ✅ Agregar este campo opcional
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  clienteId?: number;
 }
