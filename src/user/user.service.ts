@@ -6,19 +6,76 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WebsocketsGateway } from 'src/socket/gateway';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
+import { WhatsappService } from 'src/whatsapp/whatsapp.service';
 
 @Injectable() 
 export class UserService {
 
-  private zideBicep:string="25s"
+    private phoneCodes = new Map<string, string>(); // phone → code temporal
+
+    private zideBicep:string="25s"
 
     constructor(
       @InjectRepository(User) private readonly userRepository: Repository<User>,
-      private readonly websocketsGateway: WebsocketsGateway
+      private readonly websocketsGateway: WebsocketsGateway,
+          private readonly whatsappService: WhatsappService  // 👈 IMPORTANTE
+
     ){
 
     }
     
+
+
+async sendPhoneCode(phone: string) {
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+
+  this.phoneCodes.set(phone, code);
+
+  const message = `Tu código de acceso es: ${code}`;
+
+  try {
+const normalized = this.formatPhoneForWhatsApp(phone);
+
+
+await this.whatsappService.sendMessage(normalized, message);
+    console.log("📨 Código enviado por WhatsApp:", phone);
+  } catch (err) {
+    console.error("❌ Error enviando WhatsApp:", err);
+  }
+
+  return { success: true, message: "Código enviado por WhatsApp" };
+}
+
+
+async verifyPhoneCode(phone: string, code: string) {
+  const saved = this.phoneCodes.get(phone);
+
+  if (!saved || saved !== code) {
+    return { success: false, message: "Código incorrecto" };
+  }
+
+  let user = await this.userRepository.findOne({ where: { username: phone } });
+
+  if (!user) {
+    user = await this.userRepository.save(
+      this.userRepository.create({
+        username: phone,
+        name: "Cliente Teléfono",
+        isAdmin: false,
+        actived: true,
+      })
+    );
+  }
+
+  this.phoneCodes.delete(phone);
+
+  return {
+    success: true,
+    message: "Login exitoso",
+    user,
+  };
+}
+
     async create(data: CreateUser): Promise<User> {
    
     
@@ -141,6 +198,16 @@ async createFirstClientIfNoneExists(email: string): Promise<User | null> {
 
   console.log('✅ Cliente creado automáticamente:', savedUser.username);
   return savedUser;
+}
+
+private formatPhoneForWhatsApp(phone: string): string {
+  const clean = phone.replace(/\D/g, "");   // limpia texto
+
+  if (clean.startsWith("521")) return clean; // ya está ok
+  if (clean.startsWith("52")) return "521" + clean.slice(2);
+
+  // si empieza sin lada, se la ponemos
+  return "521" + clean;
 }
 
 }

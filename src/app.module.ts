@@ -33,9 +33,11 @@ import { AdminModule } from './agenda/admin-agenda/admin.module';
 import { EventoModule } from './agenda/evento/evento.module';
 import { CitaModule } from './agenda/cita/cita.module';
 import { ServicioModule } from './agenda/servicio/servicio.module';
+import { WhatsappModule } from './whatsapp/whatsapp.module';
 
 @Module({
   imports: [
+    WhatsappModule,
     AuthModule,
     MulterModule.register({
       storage: 'memory',
